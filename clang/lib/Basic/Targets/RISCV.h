@@ -70,6 +70,26 @@ public:
   }
 
   StringRef getABI() const override { return ABI; }
+
+  void setDataLayout() {
+    StringRef Layout;
+
+    if (ABI == "ilp32" || ABI == "ilp32f" || ABI == "ilp32d" ||
+        ABI == "ilp32e") {
+      Layout = "e-m:e-p:32:32-i64:64-n32-S128";
+    } else if (ABI == "ilep32" || ABI == "ilep32f" || ABI == "ilep32d" ||
+        ABI == "ilep32e") {
+      Layout = "e-m:e-p:32:32-i64:64-n32-S128-T";
+    } else if (ABI == "lp64" || ABI == "lp64f" || ABI == "lp64d") {
+      Layout = "e-m:e-p:64:64-i64:64-i128:128-n64-S128";
+    } else if (ABI == "lep64" || ABI == "lep64f" || ABI == "lep64d") {
+      Layout = "e-m:e-p:64:64-i64:64-i128:128-n64-S128-T";
+    } else
+      llvm_unreachable("Invalid ABI");
+
+    resetDataLayout(Layout);
+  }
+
   void getTargetDefines(const LangOptions &Opts,
                         MacroBuilder &Builder) const override;
 
@@ -115,14 +135,16 @@ class LLVM_LIBRARY_VISIBILITY RISCV32TargetInfo : public RISCVTargetInfo {
 public:
   RISCV32TargetInfo(const llvm::Triple &Triple, const TargetOptions &Opts)
       : RISCVTargetInfo(Triple, Opts) {
+    ABI = "ilp32"; // Default ABI
     IntPtrType = SignedInt;
     PtrDiffType = SignedInt;
     SizeType = UnsignedInt;
-    resetDataLayout("e-m:e-p:32:32-i64:64-n32-S128");
+    // resetDataLayout("e-m:e-p:32:32-i64:64-n32-S128");
   }
 
   bool setABI(const std::string &Name) override {
-    if (Name == "ilp32" || Name == "ilp32f" || Name == "ilp32d") {
+    if (Name == "ilp32" || Name == "ilp32f" || Name == "ilp32d"
+        Name == "ilep32" || Name == "ilep32f" || Name == "ilep32d") {
       ABI = Name;
       return true;
     }
@@ -145,13 +167,15 @@ class LLVM_LIBRARY_VISIBILITY RISCV64TargetInfo : public RISCVTargetInfo {
 public:
   RISCV64TargetInfo(const llvm::Triple &Triple, const TargetOptions &Opts)
       : RISCVTargetInfo(Triple, Opts) {
+    ABI = "lp64"; // Default ABI
     LongWidth = LongAlign = PointerWidth = PointerAlign = 64;
     IntMaxType = Int64Type = SignedLong;
-    resetDataLayout("e-m:e-p:64:64-i64:64-i128:128-n64-S128");
+    // resetDataLayout("e-m:e-p:64:64-i64:64-i128:128-n64-S128");
   }
 
   bool setABI(const std::string &Name) override {
-    if (Name == "lp64" || Name == "lp64f" || Name == "lp64d") {
+    if (Name == "lp64" || Name == "lp64f" || Name == "lp64d"
+        Name == "lep64" || Name == "lep64f" || Name == "lep64d") {
       ABI = Name;
       return true;
     }

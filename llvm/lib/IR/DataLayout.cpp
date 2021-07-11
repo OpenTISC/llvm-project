@@ -180,6 +180,7 @@ void DataLayout::reset(StringRef Desc) {
 
   LayoutMap = nullptr;
   BigEndian = false;
+  ExplicitPointer = false;
   AllocaAddrSpace = 0;
   StackNaturalAlign.reset();
   ProgramAddrSpace = 0;
@@ -299,6 +300,12 @@ Error DataLayout::parseSpecifier(StringRef Desc) {
       break;
     case 'e':
       BigEndian = false;
+      break;
+    case 'T':
+      ExplicitPointer = true;
+      break;
+    case 't':
+      ExplicitPointer = false;
       break;
     case 'p': {
       // Address space.
@@ -534,6 +541,7 @@ void DataLayout::init(const Module *M) { *this = M->getDataLayout(); }
 
 bool DataLayout::operator==(const DataLayout &Other) const {
   bool Ret = BigEndian == Other.BigEndian &&
+	     ExplicitPointer == Other.ExplicitPointer &&
              AllocaAddrSpace == Other.AllocaAddrSpace &&
              StackNaturalAlign == Other.StackNaturalAlign &&
              ProgramAddrSpace == Other.ProgramAddrSpace &&

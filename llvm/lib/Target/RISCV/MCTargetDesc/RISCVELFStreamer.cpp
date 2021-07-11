@@ -45,16 +45,23 @@ RISCVTargetELFStreamer::RISCVTargetELFStreamer(MCStreamer &S,
   switch (ABI) {
   case RISCVABI::ABI_ILP32:
   case RISCVABI::ABI_LP64:
+  case RISCVABI::ABI_ILEP32:
+  case RISCVABI::ABI_LEP64:
     break;
   case RISCVABI::ABI_ILP32F:
   case RISCVABI::ABI_LP64F:
+  case RISCVABI::ABI_ILEP32F:
+  case RISCVABI::ABI_LEP64F:
     EFlags |= ELF::EF_RISCV_FLOAT_ABI_SINGLE;
     break;
   case RISCVABI::ABI_ILP32D:
   case RISCVABI::ABI_LP64D:
+  case RISCVABI::ABI_ILEP32D:
+  case RISCVABI::ABI_LEP64D:
     EFlags |= ELF::EF_RISCV_FLOAT_ABI_DOUBLE;
     break;
   case RISCVABI::ABI_ILP32E:
+  case RISCVABI::ABI_ILEP32E:
     EFlags |= ELF::EF_RISCV_RVE;
     break;
   case RISCVABI::ABI_Unknown:

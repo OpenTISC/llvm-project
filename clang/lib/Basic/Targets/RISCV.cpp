@@ -128,14 +128,17 @@ void RISCVTargetInfo::getTargetDefines(const LangOptions &Opts,
     Builder.defineMacro("__riscv_cmodel_medany");
 
   StringRef ABIName = getABI();
-  if (ABIName == "ilp32f" || ABIName == "lp64f")
+  if (ABIName == "ilp32f" || ABIName == "lp64f" ||
+      ABIName == "ilep32f" || ABIName == "lep64f")
     Builder.defineMacro("__riscv_float_abi_single");
-  else if (ABIName == "ilp32d" || ABIName == "lp64d")
+  else if (ABIName == "ilp32d" || ABIName == "lp64d" ||
+           ABIName == "ilep32d" || ABIName == "lep64d")
     Builder.defineMacro("__riscv_float_abi_double");
   else
     Builder.defineMacro("__riscv_float_abi_soft");
 
-  if (ABIName == "ilp32e")
+  if (ABIName == "ilp32e" ||
+      ABIName == "ilp32e")
     Builder.defineMacro("__riscv_abi_rve");
 
   Builder.defineMacro("__riscv_arch_test");
@@ -328,6 +331,9 @@ bool RISCVTargetInfo::handleTargetFeatures(std::vector<std::string> &Features,
     else if (Feature == "+experimental-zvlsseg")
       HasZvlsseg = true;
   }
+
+  // Explicit Pointer
+  setDataLayout();
 
   return true;
 }

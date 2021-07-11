@@ -207,6 +207,11 @@ def FeatureRV32E
 def IsRV32E : Predicate<"Subtarget->isRV32E()">,
                         AssemblerPredicate<(all_of FeatureRV32E)>;
 
+def IsExplicitPointerABI
+    :Predicate<"RISCVABI::isExplicitPointerABI(Subtarget->getTargetABI())">;
+def NotExplicitPointerABI
+    :Predicate<"!RISCVABI::isExplicitPointerABI(Subtarget->getTargetABI())">;
+
 def FeatureRelax
     : SubtargetFeature<"relax", "EnableLinkerRelax", "true",
                        "Enable Linker relaxation.">;

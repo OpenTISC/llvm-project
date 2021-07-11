@@ -282,6 +282,13 @@ enum ABI {
   ABI_LP64,
   ABI_LP64F,
   ABI_LP64D,
+  ABI_ILEP32,
+  ABI_ILEP32F,
+  ABI_ILEP32D,
+  ABI_ILEP32E,
+  ABI_LEP64,
+  ABI_LEP64F,
+  ABI_LEP64D,
   ABI_Unknown
 };
 
@@ -297,6 +304,29 @@ MCRegister getBPReg();
 
 // Returns the register holding shadow call stack pointer.
 MCRegister getSCSPReg();
+
+inline static bool isExplicitPointerABI(ABI TargetABI) {
+  switch (TargetABI) {
+  case ABI_ILP32:
+  case ABI_ILP32F:
+  case ABI_ILP32D:
+  case ABI_ILP32E:
+  case ABI_LP64:
+  case ABI_LP64F:
+  case ABI_LP64D:
+    return false;
+  case ABI_ILEP32:
+  case ABI_ILEP32F:
+  case ABI_ILEP32D:
+  case ABI_ILEP32E:
+  case ABI_LEP64:
+  case ABI_LEP64F:
+  case ABI_LEP64D:
+    return true;
+  default:
+    llvm_unreachable("Improperly initialised target ABI");
+  }
+}
 
 } // namespace RISCVABI
 

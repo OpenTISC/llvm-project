@@ -693,16 +693,21 @@ StringRef riscv::getRISCVArch(const llvm::opt::ArgList &Args,
   // 3. Choose a default based on `-mabi=`
   //
   // ilp32e -> rv32e
+  // ilep32e -> rv32e
   // ilp32 | ilp32f | ilp32d -> rv32imafdc
+  // ilep32 | ilep32f | ilep32d -> rv32imafdc
   // lp64 | lp64f | lp64d -> rv64imafdc
+  // lep64 | lep64f | lep64d -> rv64imafdc
   if (const Arg *A = Args.getLastArg(options::OPT_mabi_EQ)) {
     StringRef MABI = A->getValue();
 
-    if (MABI.equals_insensitive("ilp32e"))
+    if (MABI.equals_insensitive("ilp32e") || MABI.equals_insensitive("ilep32e"))
       return "rv32e";
-    else if (MABI.startswith_insensitive("ilp32"))
+    else if (MABI.startswith_insensitive("ilp32") || 
+	     MABI.startswith_insensitive("ilep32"))
       return "rv32imafdc";
-    else if (MABI.startswith_insensitive("lp64"))
+    else if (MABI.startswith_insensitive("lp64") ||
+             MABI.startswith_insensitive("lep64"))
       return "rv64imafdc";
   }
 

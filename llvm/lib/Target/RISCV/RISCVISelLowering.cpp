@@ -64,7 +64,20 @@ RISCVTargetLowering::RISCVTargetLowering(const TargetMachine &TM,
               "doesn't support the D instruction set extension (ignoring "
               "target-abi)\n";
     ABI = Subtarget.is64Bit() ? RISCVABI::ABI_LP64 : RISCVABI::ABI_ILP32;
+  } else if ((ABI == RISCVABI::ABI_ILEP32F || ABI == RISCVABI::ABI_LEP64F) &&
+             !Subtarget.hasStdExtF()) {
+    errs() << "Hard-float 'f' ABI can't be used for a target that "
+                "doesn't support the F instruction set extension (ignoring "
+                          "target-abi)\n";
+    ABI = Subtarget.is64Bit() ? RISCVABI::ABI_LEP64 : RISCVABI::ABI_ILEP32;
+  } else if ((ABI == RISCVABI::ABI_ILEP32D || ABI == RISCVABI::ABI_LEP64D) &&
+             !Subtarget.hasStdExtD()) {
+    errs() << "Hard-float 'd' ABI can't be used for a target that "
+              "doesn't support the D instruction set extension (ignoring "
+              "target-abi)\n";
+    ABI = Subtarget.is64Bit() ? RISCVABI::ABI_LEP64 : RISCVABI::ABI_ILEP32;
   }
+
 
   switch (ABI) {
   default:
@@ -75,6 +88,12 @@ RISCVTargetLowering::RISCVTargetLowering(const TargetMachine &TM,
   case RISCVABI::ABI_LP64:
   case RISCVABI::ABI_LP64F:
   case RISCVABI::ABI_LP64D:
+  case RISCVABI::ABI_ILEP32:
+  case RISCVABI::ABI_ILEP32F:
+  case RISCVABI::ABI_ILEP32D:
+  case RISCVABI::ABI_LEP64:
+  case RISCVABI::ABI_LEP64F:
+  case RISCVABI::ABI_LEP64D:
     break;
   }
 
@@ -6855,13 +6874,19 @@ static bool CC_RISCV(const DataLayout &DL, RISCVABI::ABI ABI, unsigned ValNo,
     llvm_unreachable("Unexpected ABI");
   case RISCVABI::ABI_ILP32:
   case RISCVABI::ABI_LP64:
+  case RISCVABI::ABI_ILEP32:
+  case RISCVABI::ABI_LEP64:
     break;
   case RISCVABI::ABI_ILP32F:
   case RISCVABI::ABI_LP64F:
+  case RISCVABI::ABI_ILEP32F:
+  case RISCVABI::ABI_LEP64F:
     UseGPRForF16_F32 = !IsFixed;
     break;
   case RISCVABI::ABI_ILP32D:
   case RISCVABI::ABI_LP64D:
+  case RISCVABI::ABI_ILEP32D:
+  case RISCVABI::ABI_LEP64D:
     UseGPRForF16_F32 = !IsFixed;
     UseGPRForF64 = !IsFixed;
     break;
@@ -8655,7 +8680,8 @@ bool RISCVTargetLowering::shouldExtendTypeInLibCall(EVT Type) const {
   // Return false to suppress the unnecessary extensions if the LibCall
   // arguments or return value is f32 type for LP64 ABI.
   RISCVABI::ABI ABI = Subtarget.getTargetABI();
-  if (ABI == RISCVABI::ABI_LP64 && (Type == MVT::f32))
+  if ((ABI == RISCVABI::ABI_LP64 || ABI == RISCVABI::ABI_LEP64) && 
+     (Type == MVT::f32))
     return false;
 
   return true;

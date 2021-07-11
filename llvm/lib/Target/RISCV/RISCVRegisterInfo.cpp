@@ -63,12 +63,18 @@ RISCVRegisterInfo::getCalleeSavedRegs(const MachineFunction *MF) const {
     llvm_unreachable("Unrecognized ABI");
   case RISCVABI::ABI_ILP32:
   case RISCVABI::ABI_LP64:
+  case RISCVABI::ABI_ILEP32:
+  case RISCVABI::ABI_LEP64:
     return CSR_ILP32_LP64_SaveList;
   case RISCVABI::ABI_ILP32F:
   case RISCVABI::ABI_LP64F:
+  case RISCVABI::ABI_ILEP32F:
+  case RISCVABI::ABI_LEP64F:
     return CSR_ILP32F_LP64F_SaveList;
   case RISCVABI::ABI_ILP32D:
   case RISCVABI::ABI_LP64D:
+  case RISCVABI::ABI_ILEP32D:
+  case RISCVABI::ABI_LEP64D:
     return CSR_ILP32D_LP64D_SaveList;
   }
 }
@@ -303,12 +309,18 @@ RISCVRegisterInfo::getCallPreservedMask(const MachineFunction & MF,
     llvm_unreachable("Unrecognized ABI");
   case RISCVABI::ABI_ILP32:
   case RISCVABI::ABI_LP64:
+  case RISCVABI::ABI_ILEP32:
+  case RISCVABI::ABI_LEP64:
     return CSR_ILP32_LP64_RegMask;
   case RISCVABI::ABI_ILP32F:
   case RISCVABI::ABI_LP64F:
+  case RISCVABI::ABI_ILEP32F:
+  case RISCVABI::ABI_LEP64F:
     return CSR_ILP32F_LP64F_RegMask;
   case RISCVABI::ABI_ILP32D:
   case RISCVABI::ABI_LP64D:
+  case RISCVABI::ABI_ILEP32D:
+  case RISCVABI::ABI_LEP64D:
     return CSR_ILP32D_LP64D_RegMask;
   }
 }

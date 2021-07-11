@@ -33,18 +33,21 @@ ABI computeTargetABI(const Triple &TT, FeatureBitset FeatureBits,
     errs()
         << "'" << ABIName
         << "' is not a recognized ABI for this target (ignoring target-abi)\n";
-  } else if (ABIName.startswith("ilp32") && IsRV64) {
+  } else if ((ABIName.startswith("ilp32") || ABIName.startswith("ilep32"))
+	  && IsRV64) {
     errs() << "32-bit ABIs are not supported for 64-bit targets (ignoring "
               "target-abi)\n";
     TargetABI = ABI_Unknown;
-  } else if (ABIName.startswith("lp64") && !IsRV64) {
+  } else if ((ABIName.startswith("lp64") || ABIName.startswith("lep64"))
+	  && !IsRV64) {
     errs() << "64-bit ABIs are not supported for 32-bit targets (ignoring "
               "target-abi)\n";
     TargetABI = ABI_Unknown;
-  } else if (IsRV32E && TargetABI != ABI_ILP32E && TargetABI != ABI_Unknown) {
+  } else if (IsRV32E && (TargetABI != ABI_ILP32E || TargetABI != ABI_ILEP32E)
+	  && TargetABI != ABI_Unknown) {
     // TODO: move this checking to RISCVTargetLowering and RISCVAsmParser
-    errs()
-        << "Only the ilp32e ABI is supported for RV32E (ignoring target-abi)\n";
+    errs() << "Only the ilp32e/ilep32e ABI is supported for RV32E" 
+	      "(ignoring target-abi)\n";
     TargetABI = ABI_Unknown;
   }
 
@@ -71,6 +74,13 @@ ABI getTargetABI(StringRef ABIName) {
                        .Case("lp64", ABI_LP64)
                        .Case("lp64f", ABI_LP64F)
                        .Case("lp64d", ABI_LP64D)
+                       .Case("ilep32", ABI_ILEP32)
+                       .Case("ilep32f", ABI_ILEP32F)
+                       .Case("ilep32d", ABI_ILEP32D)
+                       .Case("ilep32e", ABI_ILEP32E)
+                       .Case("lep64", ABI_LEP64)
+                       .Case("lep64f", ABI_LEP64F)
+                       .Case("lep64d", ABI_LEP64D)
                        .Default(ABI_Unknown);
   return TargetABI;
 }

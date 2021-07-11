@@ -120,6 +120,7 @@ public:
 private:
   /// Defaults to false.
   bool BigEndian;
+  bool ExplicitPointer;
 
   unsigned AllocaAddrSpace;
   MaybeAlign StackNaturalAlign;
@@ -211,6 +212,7 @@ public:
     clear();
     StringRepresentation = DL.StringRepresentation;
     BigEndian = DL.isBigEndian();
+    ExplicitPointer = DL.isExplicitPointer();
     AllocaAddrSpace = DL.AllocaAddrSpace;
     StackNaturalAlign = DL.StackNaturalAlign;
     FunctionPtrAlign = DL.FunctionPtrAlign;
@@ -240,6 +242,10 @@ public:
   /// Layout endianness...
   bool isLittleEndian() const { return !BigEndian; }
   bool isBigEndian() const { return BigEndian; }
+
+  /// Explicit Pointer
+  bool isImplicitPointer() const { return !ExplicitPointer; }
+  bool isExplicitPointer() const { return ExplicitPointer; }
 
   /// Returns the string representation of the DataLayout.
   ///
