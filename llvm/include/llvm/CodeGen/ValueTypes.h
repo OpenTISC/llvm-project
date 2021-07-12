@@ -130,6 +130,11 @@ namespace llvm {
       return !isSimple();
     }
 
+    /// Return true if this is a Pointer type.
+    bool isPointer() const {
+      return isSimple() ? V.isPointer() : false;
+    }
+
     /// Return true if this is a FP or a vector FP type.
     bool isFloatingPoint() const {
       return isSimple() ? V.isFloatingPoint() : isExtendedFloatingPoint();

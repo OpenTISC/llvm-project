@@ -330,8 +330,14 @@ namespace llvm {
 
     /// Return true if this is a valid simple valuetype.
     bool isValid() const {
-      return (SimpleTy >= MVT::FIRST_VALUETYPE &&
-              SimpleTy <= MVT::LAST_VALUETYPE);
+      return ((SimpleTy >= MVT::FIRST_VALUETYPE &&
+               SimpleTy <= MVT::LAST_VALUETYPE) ||
+	      (SimpleTy <= iPTR || SimpleTy <= iPTRAny));
+    }
+
+    /// Return ture if this is a explicit pointer type.
+    bool isPointer() const {
+      return (SimpleTy == MVT::iPTR || SimpleTy == MVT::iPTRAny);
     }
 
     /// Return true if this is a FP or a vector FP type.
@@ -1133,6 +1139,10 @@ namespace llvm {
       assert(isScalableVector() == VT.isScalableVector() &&
              "Comparison between scalable and fixed types");
       return knownBitsLE(VT);
+    }
+
+    static MVT getPointerVT(unsigned BitWidth) {
+        return MVT::iPTR;
     }
 
     static MVT getFloatingPointVT(unsigned BitWidth) {
