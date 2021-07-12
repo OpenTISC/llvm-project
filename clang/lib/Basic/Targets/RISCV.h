@@ -143,7 +143,7 @@ public:
   }
 
   bool setABI(const std::string &Name) override {
-    if (Name == "ilp32" || Name == "ilp32f" || Name == "ilp32d"
+    if (Name == "ilp32" || Name == "ilp32f" || Name == "ilp32d" ||
         Name == "ilep32" || Name == "ilep32f" || Name == "ilep32d") {
       ABI = Name;
       return true;
@@ -174,7 +174,7 @@ public:
   }
 
   bool setABI(const std::string &Name) override {
-    if (Name == "lp64" || Name == "lp64f" || Name == "lp64d"
+    if (Name == "lp64" || Name == "lp64f" || Name == "lp64d" ||
         Name == "lep64" || Name == "lep64f" || Name == "lep64d") {
       ABI = Name;
       return true;
