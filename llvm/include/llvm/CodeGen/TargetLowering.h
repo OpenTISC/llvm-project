@@ -344,6 +344,9 @@ public:
   /// the pointer type from the data layout.
   /// FIXME: The default needs to be removed once all the code is updated.
   virtual MVT getPointerTy(const DataLayout &DL, uint32_t AS = 0) const {
+    // Explicit Pointer
+    if (DL.isExplicitPointerMode())
+      return MVT::getPointerVT(DL.getPointerSizeInBits(AS));
     return MVT::getIntegerVT(DL.getPointerSizeInBits(AS));
   }
 
@@ -351,6 +354,9 @@ public:
   /// the pointer type from the data layout.  FIXME: The default needs to be
   /// removed once all the code is updated.
   MVT getPointerMemTy(const DataLayout &DL, uint32_t AS = 0) const {
+    // Explicit Pointer
+    if (DL.isExplicitPointerMode())
+      return MVT::getPointerVT(DL.getPointerSizeInBits(AS));
     return MVT::getIntegerVT(DL.getPointerSizeInBits(AS));
   }
 
@@ -363,7 +369,10 @@ public:
   /// Return the type for code pointers, which is determined by the program
   /// address space specified through the data layout.
   MVT getProgramPointerTy(const DataLayout &DL) const {
-    return getPointerTy(DL, DL.getProgramAddressSpace());
+    // return getPointerTy(DL, DL.getProgramAddressSpace());
+    // Explicit Pointer
+    uint32_t AS = DL.getProgramAddressSpace();
+    return MVT::getIntegerVT(DL.getPointerSizeInBits(AS));
   }
 
   /// Return the type for operands of fence.
