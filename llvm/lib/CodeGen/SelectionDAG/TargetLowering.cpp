@@ -240,6 +240,13 @@ bool TargetLowering::findOptimalMemOpLowering(
           Found = true;
         }
       }
+      
+      // Explicit Pointer
+      if (VT.isPointer()) {
+        NewVT = MVT::i64;
+        Found = isSafeMemOpType(NewVT.getSimpleVT());
+      }
+
 
       if (!Found) {
         do {
@@ -4715,7 +4722,9 @@ TargetLowering::ParseConstraints(const DataLayout &DL,
         }
       } else if (PointerType *PT = dyn_cast<PointerType>(OpTy)) {
         unsigned PtrSize = DL.getPointerSizeInBits(PT->getAddressSpace());
-        OpInfo.ConstraintVT = MVT::getIntegerVT(PtrSize);
+        // Explicit Pointer
+	// OpInfo.ConstraintVT = MVT::getIntegerVT(PtrSize);
+        OpInfo.ConstraintVT = MVT::getPointerVT(PtrSize);
       } else {
         OpInfo.ConstraintVT = MVT::getVT(OpTy, true);
       }
