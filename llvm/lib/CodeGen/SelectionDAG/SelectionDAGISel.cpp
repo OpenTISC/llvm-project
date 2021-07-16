@@ -1244,7 +1244,7 @@ bool SelectionDAGISel::PrepareEHLandingPad() {
   const Constant *PersonalityFn = FuncInfo->Fn->getPersonalityFn();
   const BasicBlock *LLVMBB = MBB->getBasicBlock();
   const TargetRegisterClass *PtrRC =
-      TLI->getRegClassFor(TLI->getPointerTy(CurDAG->getDataLayout()));
+      TLI->getRegClassFor(TLI->getPointerRangeTy(CurDAG->getDataLayout()));
 
   auto Pers = classifyEHPersonality(PersonalityFn);
 

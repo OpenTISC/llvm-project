@@ -1442,9 +1442,10 @@ SDValue DAGTypeLegalizer::PromoteIntRes_VAARG(SDNode *N) {
   for (unsigned i = 1; i < NumRegs; ++i) {
     SDValue Part = DAG.getNode(ISD::ZERO_EXTEND, dl, NVT, Parts[i]);
     // Shift it to the right position and "or" it in.
-    Part = DAG.getNode(ISD::SHL, dl, NVT, Part,
-                       DAG.getConstant(i * RegVT.getSizeInBits(), dl,
-                                       TLI.getPointerTy(DAG.getDataLayout())));
+    Part = DAG.getNode(
+	       ISD::SHL, dl, NVT, Part,
+               DAG.getConstant(i * RegVT.getSizeInBits(), dl,
+                               TLI.getPointerRangeTy(DAG.getDataLayout())));
     Res = DAG.getNode(ISD::OR, dl, NVT, Res, Part);
   }
 
@@ -1685,7 +1686,7 @@ SDValue DAGTypeLegalizer::PromoteIntOp_BUILD_PAIR(SDNode *N) {
 
   Hi = DAG.getNode(ISD::SHL, dl, N->getValueType(0), Hi,
                    DAG.getConstant(OVT.getSizeInBits(), dl,
-                                   TLI.getPointerTy(DAG.getDataLayout())));
+                                   TLI.getPointerRangeTy(DAG.getDataLayout())));
   return DAG.getNode(ISD::OR, dl, N->getValueType(0), Lo, Hi);
 }
 
@@ -2888,9 +2889,10 @@ void DAGTypeLegalizer::ExpandIntRes_AssertSext(SDNode *N,
   } else {
     Lo = DAG.getNode(ISD::AssertSext, dl, NVT, Lo, DAG.getValueType(EVT));
     // The high part replicates the sign bit of Lo, make it explicit.
-    Hi = DAG.getNode(ISD::SRA, dl, NVT, Lo,
-                     DAG.getConstant(NVTBits - 1, dl,
-                                     TLI.getPointerTy(DAG.getDataLayout())));
+    Hi = DAG.getNode(
+	     ISD::SRA, dl, NVT, Lo,
+             DAG.getConstant(NVTBits - 1, dl,
+                             TLI.getPointerRangeTy(DAG.getDataLayout())));
   }
 }
 
@@ -3230,9 +3232,10 @@ void DAGTypeLegalizer::ExpandIntRes_LOAD(LoadSDNode *N,
       // The high part is obtained by SRA'ing all but one of the bits of the
       // lo part.
       unsigned LoSize = Lo.getValueSizeInBits();
-      Hi = DAG.getNode(ISD::SRA, dl, NVT, Lo,
-                       DAG.getConstant(LoSize - 1, dl,
-                                       TLI.getPointerTy(DAG.getDataLayout())));
+      Hi = DAG.getNode(
+	       ISD::SRA, dl, NVT, Lo,
+               DAG.getConstant(LoSize - 1, dl,
+                               TLI.getPointerRangeTy(DAG.getDataLayout())));
     } else if (ExtType == ISD::ZEXTLOAD) {
       // The high part is just a zero.
       Hi = DAG.getConstant(0, dl, NVT);
@@ -3292,14 +3295,15 @@ void DAGTypeLegalizer::ExpandIntRes_LOAD(LoadSDNode *N,
       // Transfer low bits from the bottom of Hi to the top of Lo.
       Lo = DAG.getNode(
           ISD::OR, dl, NVT, Lo,
-          DAG.getNode(ISD::SHL, dl, NVT, Hi,
-                      DAG.getConstant(ExcessBits, dl,
-                                      TLI.getPointerTy(DAG.getDataLayout()))));
+          DAG.getNode(
+	      ISD::SHL, dl, NVT, Hi,
+              DAG.getConstant(ExcessBits, dl,
+                              TLI.getPointerRangeTy(DAG.getDataLayout()))));
       // Move high bits to the right position in Hi.
-      Hi = DAG.getNode(ExtType == ISD::SEXTLOAD ? ISD::SRA : ISD::SRL, dl, NVT,
-                       Hi,
-                       DAG.getConstant(NVT.getSizeInBits() - ExcessBits, dl,
-                                       TLI.getPointerTy(DAG.getDataLayout())));
+      Hi = DAG.getNode(
+	       ExtType == ISD::SEXTLOAD ? ISD::SRA : ISD::SRL, dl, NVT, Hi,
+               DAG.getConstant(NVT.getSizeInBits() - ExcessBits, dl,
+                               TLI.getPointerRangeTy(DAG.getDataLayout())));
     }
   }
 
@@ -3873,7 +3877,8 @@ void DAGTypeLegalizer::ExpandIntRes_SIGN_EXTEND(SDNode *N,
     unsigned LoSize = NVT.getSizeInBits();
     Hi = DAG.getNode(
         ISD::SRA, dl, NVT, Lo,
-        DAG.getConstant(LoSize - 1, dl, TLI.getPointerTy(DAG.getDataLayout())));
+        DAG.getConstant(LoSize - 1, dl, 
+		        TLI.getPointerRangeTy(DAG.getDataLayout())));
   } else {
     // For example, extension of an i48 to an i64.  The operand type necessarily
     // promotes to the result type, so will end up being expanded too.
@@ -3905,9 +3910,10 @@ ExpandIntRes_SIGN_EXTEND_INREG(SDNode *N, SDValue &Lo, SDValue &Hi) {
 
     // The high part gets the sign extension from the lo-part.  This handles
     // things like sextinreg V:i64 from i8.
-    Hi = DAG.getNode(ISD::SRA, dl, Hi.getValueType(), Lo,
-                     DAG.getConstant(Hi.getValueSizeInBits() - 1, dl,
-                                     TLI.getPointerTy(DAG.getDataLayout())));
+    Hi = DAG.getNode(
+	     ISD::SRA, dl, Hi.getValueType(), Lo,
+             DAG.getConstant(Hi.getValueSizeInBits() - 1, dl,
+                             TLI.getPointerRangeTy(DAG.getDataLayout())));
   } else {
     // For example, extension of an i48 to an i64.  Leave the low part alone,
     // sext_inreg the high part.
@@ -3954,7 +3960,7 @@ void DAGTypeLegalizer::ExpandIntRes_TRUNCATE(SDNode *N,
   Hi = DAG.getNode(ISD::SRL, dl, N->getOperand(0).getValueType(),
                    N->getOperand(0),
                    DAG.getConstant(NVT.getSizeInBits(), dl,
-                                   TLI.getPointerTy(DAG.getDataLayout())));
+                                   TLI.getPointerRangeTy(DAG.getDataLayout())));
   Hi = DAG.getNode(ISD::TRUNCATE, dl, NVT, Hi);
 }
 
@@ -4017,7 +4023,7 @@ void DAGTypeLegalizer::ExpandIntRes_XMULO(SDNode *N,
   }
 
   Type *RetTy = VT.getTypeForEVT(*DAG.getContext());
-  EVT PtrVT = TLI.getPointerTy(DAG.getDataLayout());
+  EVT PtrVT = TLI.getPointerRangeTy(DAG.getDataLayout());
   Type *PtrTy = PtrVT.getTypeForEVT(*DAG.getContext());
 
   // Replace this with a libcall that will check overflow.
@@ -4596,14 +4602,16 @@ SDValue DAGTypeLegalizer::ExpandIntOp_STORE(StoreSDNode *N, unsigned OpNo) {
 
   if (ExcessBits < NVT.getSizeInBits()) {
     // Transfer high bits from the top of Lo to the bottom of Hi.
-    Hi = DAG.getNode(ISD::SHL, dl, NVT, Hi,
-                     DAG.getConstant(NVT.getSizeInBits() - ExcessBits, dl,
-                                     TLI.getPointerTy(DAG.getDataLayout())));
     Hi = DAG.getNode(
-        ISD::OR, dl, NVT, Hi,
-        DAG.getNode(ISD::SRL, dl, NVT, Lo,
-                    DAG.getConstant(ExcessBits, dl,
-                                    TLI.getPointerTy(DAG.getDataLayout()))));
+	     ISD::SHL, dl, NVT, Hi,
+             DAG.getConstant(NVT.getSizeInBits() - ExcessBits, dl,
+                             TLI.getPointerRangeTy(DAG.getDataLayout())));
+    Hi = DAG.getNode(
+             ISD::OR, dl, NVT, Hi,
+             DAG.getNode(
+		 ISD::SRL, dl, NVT, Lo,
+                 DAG.getConstant(ExcessBits, dl,
+                                 TLI.getPointerRangeTy(DAG.getDataLayout()))));
   }
 
   // Store both the high bits and maybe some of the low bits.

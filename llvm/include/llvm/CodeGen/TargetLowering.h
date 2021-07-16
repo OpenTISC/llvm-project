@@ -350,6 +350,12 @@ public:
     return MVT::getIntegerVT(DL.getPointerSizeInBits(AS));
   }
 
+  /// Return the integer type with the same size as the address range for
+  /// the given address space.
+  virtual MVT getPointerRangeTy(const DataLayout &DL, uint32_t AS = 0) const {
+    return MVT::getIntegerVT(DL.getPointerSizeInBits(AS));
+  }
+
   /// Return the in-memory pointer type for the given address space, defaults to
   /// the pointer type from the data layout.  FIXME: The default needs to be
   /// removed once all the code is updated.
@@ -369,10 +375,8 @@ public:
   /// Return the type for code pointers, which is determined by the program
   /// address space specified through the data layout.
   MVT getProgramPointerTy(const DataLayout &DL) const {
-    // return getPointerTy(DL, DL.getProgramAddressSpace());
-    // Explicit Pointer
-    uint32_t AS = DL.getProgramAddressSpace();
-    return MVT::getIntegerVT(DL.getPointerSizeInBits(AS));
+    // Explicit Pointer will not fortify Code Pointer
+    return getPointerRangeTy(DL, DL.getProgramAddressSpace());
   }
 
   /// Return the type for operands of fence.

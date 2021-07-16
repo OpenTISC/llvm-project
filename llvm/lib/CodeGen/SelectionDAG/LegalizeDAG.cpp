@@ -2697,7 +2697,7 @@ bool SelectionDAGLegalize::ExpandNode(SDNode *Node) {
                                  CfaArg);
     SDValue FA = DAG.getNode(
         ISD::FRAMEADDR, dl, TLI.getPointerTy(DAG.getDataLayout()),
-        DAG.getConstant(0, dl, TLI.getPointerTy(DAG.getDataLayout())));
+        DAG.getConstant(0, dl, TLI.getPointerRangeTy(DAG.getDataLayout())));
     Results.push_back(DAG.getNode(ISD::ADD, dl, FA.getValueType(),
                                   FA, Offset));
     break;
@@ -3488,7 +3488,7 @@ bool SelectionDAGLegalize::ExpandNode(SDNode *Node) {
     SDValue Index = Node->getOperand(2);
 
     const DataLayout &TD = DAG.getDataLayout();
-    EVT PTy = TLI.getPointerTy(TD);
+    EVT PTy = TLI.getPointerRangeTy(TD);
 
     unsigned EntrySize =
       DAG.getMachineFunction().getJumpTableInfo()->getEntrySize(TD);

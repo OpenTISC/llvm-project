@@ -301,7 +301,7 @@ Register FastISel::materializeConstant(const Value *V, MVT VT) {
     if (!Reg) {
       // Try to emit the constant by using an integer constant with a cast.
       const APFloat &Flt = CF->getValueAPF();
-      EVT IntVT = TLI.getPointerTy(DL);
+      EVT IntVT = TLI.getPointerRangeTy(DL);
       uint32_t IntBitWidth = IntVT.getSizeInBits();
       APSInt SIntVal(IntBitWidth, /*isUnsigned=*/false);
       bool isExact;
@@ -390,7 +390,7 @@ Register FastISel::getRegForGEPIndex(const Value *Idx) {
     return Register();
 
   // If the index is smaller or larger than intptr_t, truncate or extend it.
-  MVT PtrVT = TLI.getPointerTy(DL);
+  MVT PtrVT = TLI.getPointerRangeTy(DL);
   EVT IdxVT = EVT::getEVT(Idx->getType(), /*HandleUnknown=*/false);
   if (IdxVT.bitsLT(PtrVT)) {
     IdxN = fastEmit_r(IdxVT.getSimpleVT(), PtrVT, ISD::SIGN_EXTEND, IdxN);

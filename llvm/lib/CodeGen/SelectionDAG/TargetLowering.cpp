@@ -8467,11 +8467,11 @@ bool TargetLowering::expandMULO(SDNode *Node, SDValue &Result,
       HiLHS =
           DAG.getNode(ISD::SRA, dl, VT, LHS,
                       DAG.getConstant(LoSize - 1, dl,
-                                      getPointerTy(DAG.getDataLayout())));
+                                      getPointerRangeTy(DAG.getDataLayout())));
       HiRHS =
           DAG.getNode(ISD::SRA, dl, VT, RHS,
                       DAG.getConstant(LoSize - 1, dl,
-                                      getPointerTy(DAG.getDataLayout())));
+                                      getPointerRangeTy(DAG.getDataLayout())));
     } else {
         HiLHS = DAG.getConstant(0, dl, VT);
         HiRHS = DAG.getConstant(0, dl, VT);

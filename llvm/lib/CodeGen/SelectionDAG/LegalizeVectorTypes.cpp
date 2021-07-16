@@ -2864,7 +2864,8 @@ SDValue DAGTypeLegalizer::SplitVecOp_TruncateHelper(SDNode *N) {
     SDValue Res = DAG.getNode(
         ISD::STRICT_FP_ROUND, DL, {OutVT, MVT::Other},
         {Chain, InterVec,
-         DAG.getTargetConstant(0, DL, TLI.getPointerTy(DAG.getDataLayout()))});
+         DAG.getTargetConstant(0, DL, 
+			       TLI.getPointerRangeTy(DAG.getDataLayout()))});
     // Relink the chain
     ReplaceValueWith(SDValue(N, 1), SDValue(Res.getNode(), 1));
     return Res;
@@ -2872,8 +2873,8 @@ SDValue DAGTypeLegalizer::SplitVecOp_TruncateHelper(SDNode *N) {
 
   return IsFloat
              ? DAG.getNode(ISD::FP_ROUND, DL, OutVT, InterVec,
-                           DAG.getTargetConstant(
-                               0, DL, TLI.getPointerTy(DAG.getDataLayout())))
+                           DAG.getTargetConstant(0, DL, 
+			       TLI.getPointerRangeTy(DAG.getDataLayout())))
              : DAG.getNode(ISD::TRUNCATE, DL, OutVT, InterVec);
 }
 
