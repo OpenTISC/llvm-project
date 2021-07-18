@@ -72,6 +72,7 @@ def : WriteRes<WriteSTB, [SiFive7PipeA]>;
 def : WriteRes<WriteSTH, [SiFive7PipeA]>;
 def : WriteRes<WriteSTW, [SiFive7PipeA]>;
 def : WriteRes<WriteSTD, [SiFive7PipeA]>;
+def : WriteRes<WriteSTEP, [SiFive7PipeA]>;
 def : WriteRes<WriteFST32, [SiFive7PipeA]>;
 def : WriteRes<WriteFST64, [SiFive7PipeA]>;
 
@@ -81,6 +82,7 @@ def : WriteRes<WriteLDH, [SiFive7PipeA]>;
 def : WriteRes<WriteLDW, [SiFive7PipeA]>;
 def : WriteRes<WriteLDWU, [SiFive7PipeA]>;
 def : WriteRes<WriteLDD, [SiFive7PipeA]>;
+def : WriteRes<WriteLDEP, [SiFive7PipeA]>;
 }
 
 let Latency = 2 in {

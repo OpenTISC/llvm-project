@@ -27,11 +27,13 @@ def WriteLDH        : SchedWrite;    // Load half-word
 def WriteLDW        : SchedWrite;    // Load word
 def WriteLDWU       : SchedWrite;    // Load word unsigned
 def WriteLDD        : SchedWrite;    // Load double-word
+def WriteLDEP       : SchedWrite;    // Load explicit-pointer
 def WriteCSR        : SchedWrite;    // CSR instructions
 def WriteSTB        : SchedWrite;    // Store byte
 def WriteSTH        : SchedWrite;    // Store half-word
 def WriteSTW        : SchedWrite;    // Store word
 def WriteSTD        : SchedWrite;    // Store double-word
+def WriteSTEP       : SchedWrite;    // Store explicit-pointer
 def WriteAtomicW    : SchedWrite;    //Atomic memory operation word size
 def WriteAtomicD    : SchedWrite;    //Atomic memory operation double word size
 def WriteAtomicLDW  : SchedWrite;    // Atomic load word

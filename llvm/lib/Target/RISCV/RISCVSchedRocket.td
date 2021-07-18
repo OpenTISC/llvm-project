@@ -79,6 +79,7 @@ def : WriteRes<WriteSTB, [RocketUnitMem]>;
 def : WriteRes<WriteSTH, [RocketUnitMem]>;
 def : WriteRes<WriteSTW, [RocketUnitMem]>;
 def : WriteRes<WriteSTD, [RocketUnitMem]>;
+def : WriteRes<WriteSTEP, [RocketUnitMem]>;
 def : WriteRes<WriteFST32, [RocketUnitMem]>;
 def : WriteRes<WriteFST64, [RocketUnitMem]>;
 
@@ -91,6 +92,7 @@ let Latency = 2 in {
 def : WriteRes<WriteLDW, [RocketUnitMem]>;
 def : WriteRes<WriteLDWU, [RocketUnitMem]>;
 def : WriteRes<WriteLDD, [RocketUnitMem]>;
+def : WriteRes<WriteLDEP, [RocketUnitMem]>;
 def : WriteRes<WriteFLD32, [RocketUnitMem]>;
 def : WriteRes<WriteFLD64, [RocketUnitMem]>;
 

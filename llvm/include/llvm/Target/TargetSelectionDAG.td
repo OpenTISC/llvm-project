@@ -977,6 +977,10 @@ def zextload  : PatFrag<(ops node:$ptr), (unindexedload node:$ptr)> {
   let IsZeroExtLoad = true;
 }
 
+def loadiptr  : PatFrag<(ops node:$ptr), (load node:$ptr)> {
+  let IsLoad = true;
+  let MemoryVT = iPTR;
+}
 def extloadi1  : PatFrag<(ops node:$ptr), (extload node:$ptr)> {
   let IsLoad = true;
   let MemoryVT = i1;
@@ -1108,6 +1112,13 @@ def unindexedstore : PatFrag<(ops node:$val, node:$ptr),
 def store : PatFrag<(ops node:$val, node:$ptr),
                     (unindexedstore node:$val, node:$ptr)> {
   let IsStore = true;
+  let IsTruncStore = false;
+}
+
+def storeiptr : PatFrag<(ops node:$val, node:$ptr),
+                         (store node:$val, node:$ptr)> {
+  let IsStore = true;
+  let MemoryVT = iPTR;
   let IsTruncStore = false;
 }
 

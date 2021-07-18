@@ -42,4 +42,18 @@ def : Pat<(add (i32 AddrFI:$Rs), simm12:$imm12),
 def : Pat<(IsOrAdd (i32 AddrFI:$Rs), simm12:$imm12),
           (INCPI (i32 AddrFI:$Rs), simm12:$imm12)>;
 
+/// Explicit Pointer Loads/Stores
+def LEP    : Load_ri<0b111, "lep">, Sched<[WriteLDEP, ReadMemBase]>;
+def SEP    : Store_rri<0b111, "sep">, Sched<[WriteSTEP, ReadStoreData, ReadMemBase]>;
+
+def PseudoLEP  : PseudoLoad<"lep">;
+def PseudoSEP  : PseudoStore<"sep">;
+
+def : InstAlias<"lep $rd, (${rs1})",
+                (LEP  GPR:$rd, GPR:$rs1, 0)>;
+def : InstAlias<"sep $rs2, (${rs1})",
+                (SEP  GPR:$rs2, GPR:$rs1, 0)>;
+
+defm : LdPat<loadiptr, LEP, iPTR>;
+defm : StPat<storeiptr, SEP, GPR, iPTR>;
 }
