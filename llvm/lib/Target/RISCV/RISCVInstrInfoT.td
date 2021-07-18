@@ -30,6 +30,8 @@ def INCPI    : MISC_ri<0b100, "incpi">, Sched<[WriteIALU, ReadIALU]>;
 def INCP     : ALU_rr<0b0000010, 0b100, "incp">, Sched<[WriteIALU, ReadIALU, ReadIALU]>;
 
 def : PatGprGpr<ptradd, INCP>;
+def : PatGprSimm12<ptradd, INCPI>;
+
 def : Pat<(ptrtoint GPR:$rs1), (COPY GPR:$rs1)>;
 def : Pat<(inttoptr GPR:$rs1), (COPY GPR:$rs1)>;
 
