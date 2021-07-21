@@ -157,6 +157,8 @@ std::string EVT::getEVTString() const {
              getVectorElementType().getEVTString();
     if (isInteger())
       return "i" + utostr(getSizeInBits());
+    if (isPointer())
+      return "iPTR";
     if (isFloatingPoint())
       return "f" + utostr(getSizeInBits());
     llvm_unreachable("Invalid EVT!");
@@ -511,6 +513,8 @@ Type *EVT::getTypeForEVT(LLVMContext &Context) const {
   case MVT::nxv8f64:
     return ScalableVectorType::get(Type::getDoubleTy(Context), 8);
   case MVT::Metadata: return Type::getMetadataTy(Context);
+  case MVT::iPTR:
+    return PointerType::get(Type::getInt8Ty(Context), 0);
   }
 }
 

@@ -1458,12 +1458,20 @@ public:
 
   /// Return the type of registers that this ValueType will eventually require.
   MVT getRegisterType(MVT VT) const {
+    if (VT.isPointer()) {
+       // FIXME: i32 or i64?
+       return RegisterTypeForVT[MVT::i8];
+    }
     assert((unsigned)VT.SimpleTy < array_lengthof(RegisterTypeForVT));
     return RegisterTypeForVT[VT.SimpleTy];
   }
 
   /// Return the type of registers that this ValueType will eventually require.
   MVT getRegisterType(LLVMContext &Context, EVT VT) const {
+    if (VT.isPointer()) {
+       // FIXME: i32 or i64?
+       return RegisterTypeForVT[MVT::i8];
+    }
     if (VT.isSimple()) {
       assert((unsigned)VT.getSimpleVT().SimpleTy <
                 array_lengthof(RegisterTypeForVT));
