@@ -332,12 +332,12 @@ namespace llvm {
     bool isValid() const {
       return ((SimpleTy >= MVT::FIRST_VALUETYPE &&
                SimpleTy <= MVT::LAST_VALUETYPE) ||
-	      (SimpleTy <= iPTR || SimpleTy <= iPTRAny));
+	      (SimpleTy == iPTR));
     }
 
     /// Return ture if this is a explicit pointer type.
     bool isPointer() const {
-      return (SimpleTy == MVT::iPTR || SimpleTy == MVT::iPTRAny);
+      return (SimpleTy == MVT::iPTR);
     }
 
     /// Return true if this is a FP or a vector FP type.

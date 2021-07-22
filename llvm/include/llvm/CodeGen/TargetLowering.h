@@ -906,6 +906,9 @@ public:
   /// This means that it has a register that directly holds it without
   /// promotions or expansions.
   bool isTypeLegal(EVT VT) const {
+    if (VT.isPointer()) {
+      return true;
+    }
     assert(!VT.isSimple() ||
            (unsigned)VT.getSimpleVT().SimpleTy < array_lengthof(RegClassForVT));
     return VT.isSimple() && RegClassForVT[VT.getSimpleVT().SimpleTy] != nullptr;
@@ -1459,7 +1462,7 @@ public:
   /// Return the type of registers that this ValueType will eventually require.
   MVT getRegisterType(MVT VT) const {
     if (VT.isPointer()) {
-       // FIXME: i32 or i64?
+       // Explicit Pointer
        return RegisterTypeForVT[MVT::i8];
     }
     assert((unsigned)VT.SimpleTy < array_lengthof(RegisterTypeForVT));
@@ -1469,7 +1472,7 @@ public:
   /// Return the type of registers that this ValueType will eventually require.
   MVT getRegisterType(LLVMContext &Context, EVT VT) const {
     if (VT.isPointer()) {
-       // FIXME: i32 or i64?
+       // Explicit Pointer 
        return RegisterTypeForVT[MVT::i8];
     }
     if (VT.isSimple()) {
@@ -1505,6 +1508,10 @@ public:
   virtual unsigned
   getNumRegisters(LLVMContext &Context, EVT VT,
                   Optional<MVT> RegisterVT = None) const {
+    // Explicit Pointer
+    if (VT.isPointer()) {
+      return NumRegistersForVT[MVT::i8];
+    } 
     if (VT.isSimple()) {
       assert((unsigned)VT.getSimpleVT().SimpleTy <
                 array_lengthof(NumRegistersForVT));
