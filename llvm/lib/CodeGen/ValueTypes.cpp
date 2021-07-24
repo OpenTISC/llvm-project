@@ -171,6 +171,7 @@ std::string EVT::getEVTString() const {
   case MVT::Untyped:   return "Untyped";
   case MVT::funcref:   return "funcref";
   case MVT::externref: return "externref";
+  case MVT::iPTR:      return "iPTR";
   }
 }
 
@@ -198,6 +199,7 @@ Type *EVT::getTypeForEVT(LLVMContext &Context) const {
   case MVT::ppcf128: return Type::getPPC_FP128Ty(Context);
   case MVT::x86mmx:  return Type::getX86_MMXTy(Context);
   case MVT::x86amx:  return Type::getX86_AMXTy(Context);
+  case MVT::iPTR:    return PointerType::get(Type::getInt8Ty(Context), 0);
   case MVT::v1i1:
     return FixedVectorType::get(Type::getInt1Ty(Context), 1);
   case MVT::v2i1:

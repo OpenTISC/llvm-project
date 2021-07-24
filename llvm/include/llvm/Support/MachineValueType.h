@@ -269,9 +269,15 @@ namespace llvm {
       funcref        = 175,    // WebAssembly's funcref type
       externref      = 176,    // WebAssembly's externref type
       x86amx         = 177,    // This is an X86 AMX value
+      
+      // Explicit Pointer. this will be used as a ValueType
+      iPTR           = 178,
+      iPTRAny        = 179,
 
       FIRST_VALUETYPE =  1,    // This is always the beginning of the list.
-      LAST_VALUETYPE = x86amx, // This always remains at the end of the list.
+      // LAST_VALUETYPE = x86amx, // This always remains at the end of the list.
+      // Explicit Pointer
+      LAST_VALUETYPE = iPTRAny,   // This always remains at the end of the list.
       VALUETYPE_SIZE = LAST_VALUETYPE + 1,
 
       // This is the current maximum for LAST_VALUETYPE.
@@ -288,7 +294,7 @@ namespace llvm {
       // An int value the size of the pointer of the current
       // target to any address space. This must only be used internal to
       // tblgen. Other than for overloading, we treat iPTRAny the same as iPTR.
-      iPTRAny        = 250,
+      // iPTRAny        = 250,
 
       // A vector with any length and element size. This is used
       // for intrinsics that have overloadings based on vector types.
@@ -307,7 +313,7 @@ namespace llvm {
 
       // An int value the size of the pointer of the current
       // target.  This should only be used internal to tblgen!
-      iPTR           = 254,
+      // iPTR           = 254,
 
       // Any type. This is used for intrinsics that have overloadings.
       // This is only for tblgen's consumption!
@@ -330,14 +336,13 @@ namespace llvm {
 
     /// Return true if this is a valid simple valuetype.
     bool isValid() const {
-      return ((SimpleTy >= MVT::FIRST_VALUETYPE &&
-               SimpleTy <= MVT::LAST_VALUETYPE) ||
-	      (SimpleTy <= iPTR || SimpleTy <= iPTRAny));
+      return (SimpleTy >= MVT::FIRST_VALUETYPE &&
+               SimpleTy <= MVT::LAST_VALUETYPE);
     }
 
     /// Return ture if this is a explicit pointer type.
     bool isPointer() const {
-      return (SimpleTy == MVT::iPTR || SimpleTy == MVT::iPTRAny);
+      return (SimpleTy == MVT::iPTR);
     }
 
     /// Return true if this is a FP or a vector FP type.
@@ -868,7 +873,10 @@ namespace llvm {
       case Other:
         llvm_unreachable("Value type is non-standard value, Other.");
       case iPTR:
-        llvm_unreachable("Value type size is target-dependent. Ask TLI.");
+        // llvm_unreachable("Value type size is target-dependent. Ask TLI.");
+	// Explicit Pointer
+	// FIXME: hard-wired to 64 in TISC-RV64
+	return TypeSize::Fixed(64);
       case iPTRAny:
       case iAny:
       case fAny:
