@@ -272,12 +272,11 @@ namespace llvm {
       
       // Explicit Pointer. this will be used as a ValueType
       iPTR           = 178,
-      iPTRAny        = 179,
 
       FIRST_VALUETYPE =  1,    // This is always the beginning of the list.
       // LAST_VALUETYPE = x86amx, // This always remains at the end of the list.
       // Explicit Pointer
-      LAST_VALUETYPE = iPTRAny,   // This always remains at the end of the list.
+      LAST_VALUETYPE = iPTR,   // This always remains at the end of the list.
       VALUETYPE_SIZE = LAST_VALUETYPE + 1,
 
       // This is the current maximum for LAST_VALUETYPE.
@@ -294,7 +293,7 @@ namespace llvm {
       // An int value the size of the pointer of the current
       // target to any address space. This must only be used internal to
       // tblgen. Other than for overloading, we treat iPTRAny the same as iPTR.
-      // iPTRAny        = 250,
+      iPTRAny        = 250,
 
       // A vector with any length and element size. This is used
       // for intrinsics that have overloadings based on vector types.
