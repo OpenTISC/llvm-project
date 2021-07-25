@@ -1506,15 +1506,6 @@ void TargetLoweringBase::computeRegisterProperties(
     RepRegClassForVT[i] = RRC;
     RepRegClassCostForVT[i] = Cost;
   }
-
-  // Explicit Pointer
-  // iPTR's Regsiter Properties is set to MVT::i64's
-  NumRegistersForVT[MVT::iPTR] = NumRegistersForVT[MVT::i64];
-  RegClassForVT[MVT::iPTR] = RegClassForVT[MVT::i64];
-  RegisterTypeForVT[MVT::iPTR] = RegisterTypeForVT[MVT::i64];
-  TransformToType[MVT::iPTR] = TransformToType[MVT::i64];
-  RepRegClassForVT[MVT::iPTR] = RepRegClassForVT[MVT::i64];
-  RepRegClassCostForVT[MVT::iPTR] = RepRegClassCostForVT[MVT::i64];
 }
 
 EVT TargetLoweringBase::getSetCCResultType(const DataLayout &DL, LLVMContext &,
