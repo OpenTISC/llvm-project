@@ -461,6 +461,9 @@ void RISCVDAGToDAGISel::Select(SDNode *Node) {
     SDValue Imm = CurDAG->getTargetConstant(0, DL, XLenVT);
     int FI = cast<FrameIndexSDNode>(Node)->getIndex();
     SDValue TFI = CurDAG->getTargetFrameIndex(FI, VT);
+    // Explicit Pointer
+    unsigned Opc = CurDAG->getDataLayout().isExplicitPointer() ?
+                                           RISCV::INCPI : RISCV::ADDI;
     ReplaceNode(Node, CurDAG->getMachineNode(RISCV::ADDI, DL, VT, TFI, Imm));
     return;
   }
@@ -1531,6 +1534,7 @@ void RISCVDAGToDAGISel::doPeepholeLoadStoreADDI() {
 
     int OffsetOpIdx;
     int BaseOpIdx;
+    unsigned OffsettingOpcode; // Explicit Pointer
 
     // Only attempt this optimisation for I-type loads and S-type stores.
     switch (N->getMachineOpcode()) {
@@ -1548,6 +1552,9 @@ void RISCVDAGToDAGISel::doPeepholeLoadStoreADDI() {
     case RISCV::FLD:
       BaseOpIdx = 0;
       OffsetOpIdx = 1;
+      // Explicit Pointer
+      OffsettingOpcode = CurDAG->getDataLayout().isExplicitPointer() ?
+                         RISCV::INCPI : RISCV::ADDI;
       break;
     case RISCV::SB:
     case RISCV::SH:
@@ -1558,6 +1565,9 @@ void RISCVDAGToDAGISel::doPeepholeLoadStoreADDI() {
     case RISCV::FSD:
       BaseOpIdx = 1;
       OffsetOpIdx = 2;
+      // Explicit Pointer
+      OffsettingOpcode = CurDAG->getDataLayout().isExplicitPointer() ?
+                         RISCV::INCPI : RISCV::ADDI;
       break;
     }
 
@@ -1567,7 +1577,8 @@ void RISCVDAGToDAGISel::doPeepholeLoadStoreADDI() {
     SDValue Base = N->getOperand(BaseOpIdx);
 
     // If the base is an ADDI, we can merge it in to the load/store.
-    if (!Base.isMachineOpcode() || Base.getMachineOpcode() != RISCV::ADDI)
+    // Explicit Pointer
+    if (!Base.isMachineOpcode() || Base.getMachineOpcode() != OffsettingOpcode)
       continue;
 
     SDValue ImmOperand = Base.getOperand(1);

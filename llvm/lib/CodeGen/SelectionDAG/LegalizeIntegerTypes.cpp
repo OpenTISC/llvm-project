@@ -231,6 +231,9 @@ void DAGTypeLegalizer::PromoteIntegerResult(SDNode *N, unsigned ResNo) {
   case ISD::FSHR:
     Res = PromoteIntRes_FunnelShift(N);
     break;
+
+  // ExplicitPointer
+  case ISD::PTRTOINT:    Res = PromoteIntRes_PTRTOINT(N); break;
   }
 
   // If the result is null then the sub-method took care of registering it.
@@ -1560,6 +1563,9 @@ bool DAGTypeLegalizer::PromoteIntegerOperand(SDNode *N, unsigned OpNo) {
   case ISD::VECREDUCE_UMIN: Res = PromoteIntOp_VECREDUCE(N); break;
 
   case ISD::SET_ROUNDING: Res = PromoteIntOp_SET_ROUNDING(N); break;
+
+  // ExplicitPointer
+  case ISD::INTTOPTR: Res = PromoteIntOp_INTTOPTR(N);break;
   }
 
   // If the result is null, the sub-method took care of registering results etc.
@@ -4201,6 +4207,15 @@ void DAGTypeLegalizer::ExpandIntRes_FunnelShift(SDNode *N,
   SplitInteger(Res, Lo, Hi);
 }
 
+// ExplicitPointer
+SDValue DAGTypeLegalizer::PromoteIntRes_PTRTOINT(SDNode *N) {
+  SDValue InOp = N->getOperand(0);
+  EVT OutVT = N->getValueType(0);
+  EVT NOutVT = TLI.getTypeToTransformTo(*DAG.getContext(), OutVT);
+  SDLoc dl(N);
+  return DAG.getNode(ISD::PTRTOINT, dl, NOutVT, InOp);
+}
+
 //===----------------------------------------------------------------------===//
 //  Integer Operand Expansion
 //===----------------------------------------------------------------------===//
@@ -4991,4 +5006,10 @@ SDValue DAGTypeLegalizer::PromoteIntOp_CONCAT_VECTORS(SDNode *N) {
   }
 
   return DAG.getBuildVector(N->getValueType(0), dl, NewOps);
+}
+
+// ExplicitPointer
+SDValue DAGTypeLegalizer::PromoteIntOp_INTTOPTR(SDNode *N) {
+  SDValue InOp = GetPromotedInteger(N->getOperand(0));
+  return DAG.getNode(ISD::INTTOPTR, SDLoc(N), N->getValueType(0), InOp);
 }

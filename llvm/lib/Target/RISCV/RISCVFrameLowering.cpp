@@ -261,24 +261,35 @@ void RISCVFrameLowering::adjustReg(MachineBasicBlock &MBB,
     return;
 
   if (isInt<12>(Val)) {
-    BuildMI(MBB, MBBI, DL, TII->get(RISCV::ADDI), DestReg)
+    // Explicit Pointer
+    unsigned Opc = RISCV::ADDI;
+    if (RISCVABI::isExplicitPointerABI(STI.getTargetABI()))
+      Opc = RISCV::INCPI;
+
+    BuildMI(MBB, MBBI, DL, TII->get(Opc), DestReg)
         .addReg(SrcReg)
         .addImm(Val)
         .setMIFlag(Flag);
   } else {
+    // Explicit Pointer
     unsigned Opc = RISCV::ADD;
+    if( RISCVABI::isExplicitPointerABI(STI.getTargetABI())) 
+      Opc = RISCV::INCP;
+    else { 
     bool isSub = Val < 0;
     if (isSub) {
       Val = -Val;
       Opc = RISCV::SUB;
     }
+  }
 
-    Register ScratchReg = MRI.createVirtualRegister(&RISCV::GPRRegClass);
-    TII->movImm(MBB, MBBI, DL, ScratchReg, Val, Flag);
-    BuildMI(MBB, MBBI, DL, TII->get(Opc), DestReg)
-        .addReg(SrcReg)
-        .addReg(ScratchReg, RegState::Kill)
-        .setMIFlag(Flag);
+
+  Register ScratchReg = MRI.createVirtualRegister(&RISCV::GPRRegClass);
+  TII->movImm(MBB, MBBI, DL, ScratchReg, Val, Flag);
+  BuildMI(MBB, MBBI, DL, TII->get(Opc), DestReg)
+      .addReg(SrcReg)
+      .addReg(ScratchReg, RegState::Kill)
+      .setMIFlag(Flag);
   }
 }
 

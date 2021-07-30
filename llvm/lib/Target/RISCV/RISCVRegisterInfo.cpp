@@ -170,6 +170,7 @@ void RISCVRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
   MachineInstr &MI = *II;
   MachineFunction &MF = *MI.getParent()->getParent();
   MachineRegisterInfo &MRI = MF.getRegInfo();
+  const RISCVSubtarget &STI = MF.getSubtarget<RISCVSubtarget>();
   const RISCVInstrInfo *TII = MF.getSubtarget<RISCVSubtarget>().getInstrInfo();
   DebugLoc DL = MI.getDebugLoc();
 
@@ -211,9 +212,17 @@ void RISCVRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
     // The offset won't fit in an immediate, so use a scratch register instead
     // Modify Offset and FrameReg appropriately
     Register ScratchReg = MRI.createVirtualRegister(&RISCV::GPRRegClass);
+    // Explicit Pointer
+    unsigned Opc;
+    if (RISCVABI::isExplicitPointerABI(STI.getTargetABI())) {
+      Opc = RISCV::INCP;
+    } else {
+      Opc = RISCV::ADD;
+    }
     TII->movImm(MBB, II, DL, ScratchReg, Offset.getFixed());
     if (MI.getOpcode() == RISCV::ADDI && !Offset.getScalable()) {
-      BuildMI(MBB, II, DL, TII->get(RISCV::ADD), MI.getOperand(0).getReg())
+      // Explicit Pointer
+      BuildMI(MBB, II, DL, TII->get(Opc), MI.getOperand(0).getReg())
         .addReg(FrameReg)
         .addReg(ScratchReg, RegState::Kill);
       MI.eraseFromParent();

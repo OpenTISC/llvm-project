@@ -345,8 +345,9 @@ public:
   /// FIXME: The default needs to be removed once all the code is updated.
   virtual MVT getPointerTy(const DataLayout &DL, uint32_t AS = 0) const {
     // Explicit Pointer
-    if (DL.isExplicitPointerMode())
-      return MVT::getPointerVT(DL.getPointerSizeInBits(AS));
+    // FIXME: iPTR to Int64? Because there is not Pointer RegisterClass
+    // if (DL.isExplicitPointer())
+    //   return MVT::getPointerVT(DL.getPointerSizeInBits(AS));
     return MVT::getIntegerVT(DL.getPointerSizeInBits(AS));
   }
 
@@ -361,8 +362,9 @@ public:
   /// removed once all the code is updated.
   MVT getPointerMemTy(const DataLayout &DL, uint32_t AS = 0) const {
     // Explicit Pointer
-    if (DL.isExplicitPointerMode())
-      return MVT::getPointerVT(DL.getPointerSizeInBits(AS));
+    // FIXME: iPTR to Int64? Because there is not Pointer RegisterClass
+    // if (DL.isExplicitPointer())
+    //   return MVT::getPointerVT(DL.getPointerSizeInBits(AS));
     return MVT::getIntegerVT(DL.getPointerSizeInBits(AS));
   }
 

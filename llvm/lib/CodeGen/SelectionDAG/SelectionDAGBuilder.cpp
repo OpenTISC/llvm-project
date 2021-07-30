@@ -505,7 +505,7 @@ static void getCopyToParts(SelectionDAG &DAG, const SDLoc &DL, SDValue Val,
 
   // Explicit Pointer
   bool isExplicitPointer = PartVT.isPointer() && 
-	                   DAG.getDataLayout().isExplicitPointerMode();
+	                   DAG.getDataLayout().isExplicitPointer();
 
   if (NumParts * PartBits > ValueVT.getSizeInBits()) {
     // If the parts cover more bits than the value has, promote the value.
@@ -3473,7 +3473,7 @@ void SelectionDAGBuilder::visitPtrToInt(const User &I) {
                                                         I.getType());
   // Explicit Pointer
   bool isExplicitPointer = N.getValueType().isPointer() &&
-                           DAG.getDataLayout().isExplicitPointerMode();
+                           DAG.getDataLayout().isExplicitPointer();
 
   if (isExplicitPointer) {
     setValue(&I, DAG.getNode(ISD::PTRTOINT, getCurSDLoc(), DestVT, N));
@@ -3496,7 +3496,7 @@ void SelectionDAGBuilder::visitIntToPtr(const User &I) {
 
   // Explicit Pointer
   bool isExplicitPointer = N.getValueType().isPointer() &&
-                           DAG.getDataLayout().isExplicitPointerMode();
+                           DAG.getDataLayout().isExplicitPointer();
 
   if (isExplicitPointer) {
     setValue(&I, DAG.getNode(ISD::INTTOPTR, getCurSDLoc(), DestVT, N));
@@ -3871,7 +3871,7 @@ void SelectionDAGBuilder::visitGetElementPtr(const User &I) {
 
   // Explicit Pointer
   bool isExplicitPointer = N.getValueType().isPointer() &&
-                           DAG.getDataLayout().isExplicitPointerMode();
+                           DAG.getDataLayout().isExplicitPointer();
   SDValue OrigN = N;
 
   // Normalize Vector GEP - all scalar operands should be converted to the

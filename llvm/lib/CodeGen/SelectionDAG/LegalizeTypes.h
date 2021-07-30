@@ -355,6 +355,7 @@ private:
   SDValue PromoteIntRes_ABS(SDNode *N);
   SDValue PromoteIntRes_Rotate(SDNode *N);
   SDValue PromoteIntRes_FunnelShift(SDNode *N);
+  SDValue PromoteIntRes_PTRTOINT(SDNode *N);
 
   // Integer Operand Promotion.
   bool PromoteIntegerOperand(SDNode *N, unsigned OpNo);
@@ -394,6 +395,7 @@ private:
   SDValue PromoteIntOp_FPOWI(SDNode *N);
   SDValue PromoteIntOp_VECREDUCE(SDNode *N);
   SDValue PromoteIntOp_SET_ROUNDING(SDNode *N);
+  SDValue PromoteIntOp_INTTOPTR(SDNode *N);
 
   void PromoteSetCCOperands(SDValue &LHS,SDValue &RHS, ISD::CondCode Code);
 
