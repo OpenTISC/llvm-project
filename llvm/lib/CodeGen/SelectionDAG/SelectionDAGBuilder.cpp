@@ -503,7 +503,7 @@ static void getCopyToParts(SelectionDAG &DAG, const SDLoc &DL, SDValue Val,
     return;
   }
 
-  // Explicit Pointer
+  // ExplicitPointer
   bool isExplicitPointer = PartVT.isPointer() && 
 	                   DAG.getDataLayout().isExplicitPointer();
 
@@ -3471,9 +3471,9 @@ void SelectionDAGBuilder::visitPtrToInt(const User &I) {
   auto &TLI = DAG.getTargetLoweringInfo();
   EVT DestVT = DAG.getTargetLoweringInfo().getValueType(DAG.getDataLayout(),
                                                         I.getType());
-  // Explicit Pointer
-  bool isExplicitPointer = N.getValueType().isPointer() &&
-                           DAG.getDataLayout().isExplicitPointer();
+  // ExplicitPointer
+  bool isExplicitPointer = DAG.getDataLayout().isExplicitPointer(); // &&
+                           // N.getValueType().isPointer() &&
 
   if (isExplicitPointer) {
     setValue(&I, DAG.getNode(ISD::PTRTOINT, getCurSDLoc(), DestVT, N));
@@ -3494,9 +3494,9 @@ void SelectionDAGBuilder::visitIntToPtr(const User &I) {
   auto &TLI = DAG.getTargetLoweringInfo();
   EVT DestVT = TLI.getValueType(DAG.getDataLayout(), I.getType());
 
-  // Explicit Pointer
-  bool isExplicitPointer = N.getValueType().isPointer() &&
-                           DAG.getDataLayout().isExplicitPointer();
+  // ExplicitPointer
+  bool isExplicitPointer = DAG.getDataLayout().isExplicitPointer(); // &&
+                           // N.getValueType().isPointer() &&
 
   if (isExplicitPointer) {
     setValue(&I, DAG.getNode(ISD::INTTOPTR, getCurSDLoc(), DestVT, N));
@@ -3869,10 +3869,14 @@ void SelectionDAGBuilder::visitGetElementPtr(const User &I) {
   SDLoc dl = getCurSDLoc();
   auto &TLI = DAG.getTargetLoweringInfo();
 
-  // Explicit Pointer
-  bool isExplicitPointer = N.getValueType().isPointer() &&
-                           DAG.getDataLayout().isExplicitPointer();
+  // ExplicitPointer
+  bool isExplicitPointer = DAG.getDataLayout().isExplicitPointer(); // &&
+                           // N.getValueType().isPointer() &&
   SDValue OrigN = N;
+
+  if (isExplicitPointer) {
+    N = DAG.getIntPtrConstant(0, dl);
+  }
 
   // Normalize Vector GEP - all scalar operands should be converted to the
   // splat vector.
@@ -4005,7 +4009,7 @@ void SelectionDAGBuilder::visitGetElementPtr(const User &I) {
     PtrMemTy = MVT::getVectorVT(PtrMemTy, VectorElementCount);
   }
   
-  // Explicit Pointer
+  // ExplicitPointer
   if (isExplicitPointer)
     N = DAG.getNode(ISD::PTRADD, getCurSDLoc(), OrigN.getValueType(), OrigN,
         N);

@@ -56,4 +56,4 @@ def : InstAlias<"sep $rs2, (${rs1})",
 
 defm : LdPat<loadiptr, LEP, iPTR>;
 defm : StPat<storeiptr, SEP, GPR, iPTR>;
-}
+} // Predicates = [IsExplicitPointerABI]

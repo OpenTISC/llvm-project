@@ -943,11 +943,12 @@ def PseudoAddTPRel : Pseudo<(outs GPR:$rd),
                             "add", "$rd, $rs1, $rs2, $src">;
 
 /// FrameIndex calculations
-
+let Predicates = [NotExplicitPointerABI] in {
 def : Pat<(add (XLenVT AddrFI:$Rs), simm12:$imm12),
           (ADDI (XLenVT AddrFI:$Rs), simm12:$imm12)>;
 def : Pat<(IsOrAdd (XLenVT AddrFI:$Rs), simm12:$imm12),
           (ADDI (XLenVT AddrFI:$Rs), simm12:$imm12)>;
+} /// Predicates = [NotExplicitPointerABI]
 
 /// Setcc
 
