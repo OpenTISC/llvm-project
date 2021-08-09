@@ -212,7 +212,7 @@ void RISCVRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
     // The offset won't fit in an immediate, so use a scratch register instead
     // Modify Offset and FrameReg appropriately
     Register ScratchReg = MRI.createVirtualRegister(&RISCV::GPRRegClass);
-    // Explicit Pointer
+    // ExplicitPointer
     unsigned Opc;
     if (RISCVABI::isExplicitPointerABI(STI.getTargetABI())) {
       Opc = RISCV::INCP;
@@ -221,7 +221,7 @@ void RISCVRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
     }
     TII->movImm(MBB, II, DL, ScratchReg, Offset.getFixed());
     if (MI.getOpcode() == RISCV::ADDI && !Offset.getScalable()) {
-      // Explicit Pointer
+      // ExplicitPointer
       BuildMI(MBB, II, DL, TII->get(Opc), MI.getOperand(0).getReg())
         .addReg(FrameReg)
         .addReg(ScratchReg, RegState::Kill);

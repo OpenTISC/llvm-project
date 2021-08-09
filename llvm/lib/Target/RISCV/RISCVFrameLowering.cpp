@@ -261,7 +261,7 @@ void RISCVFrameLowering::adjustReg(MachineBasicBlock &MBB,
     return;
 
   if (isInt<12>(Val)) {
-    // Explicit Pointer
+    // ExplicitPointer
     unsigned Opc = RISCV::ADDI;
     if (RISCVABI::isExplicitPointerABI(STI.getTargetABI()))
       Opc = RISCV::INCPI;
@@ -271,11 +271,12 @@ void RISCVFrameLowering::adjustReg(MachineBasicBlock &MBB,
         .addImm(Val)
         .setMIFlag(Flag);
   } else {
-    // Explicit Pointer
+    // ExplicitPointer
     unsigned Opc = RISCV::ADD;
     if( RISCVABI::isExplicitPointerABI(STI.getTargetABI())) 
       Opc = RISCV::INCP;
-    else { 
+    else {
+    // FIXME: ExplicitPointer Substrate??? 
     bool isSub = Val < 0;
     if (isSub) {
       Val = -Val;

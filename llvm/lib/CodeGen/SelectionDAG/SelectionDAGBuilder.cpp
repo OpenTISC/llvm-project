@@ -513,7 +513,7 @@ static void getCopyToParts(SelectionDAG &DAG, const SDLoc &DL, SDValue Val,
       assert(NumParts == 1 && "Do not know what to promote to!");
       Val = DAG.getNode(ISD::FP_EXTEND, DL, PartVT, Val);
     } else if (isExplicitPointer) {
-      // Explicit Pointer
+      // ExplicitPointer
       Val = DAG.getNode(ISD::INTTOPTR, DL, PartVT, Val);
     } else {
       if (ValueVT.isFloatingPoint()) {

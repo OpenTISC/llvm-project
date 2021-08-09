@@ -241,11 +241,11 @@ bool TargetLowering::findOptimalMemOpLowering(
         }
       }
       
-      // Explicit Pointer
-      if (VT.isPointer()) {
-        NewVT = MVT::i64;
-        Found = isSafeMemOpType(NewVT.getSimpleVT());
-      }
+      // ExplicitPointer
+      // if (VT.isPointer()) {
+      //   NewVT = MVT::i64;
+      //   Found = isSafeMemOpType(NewVT.getSimpleVT());
+      // }
 
 
       if (!Found) {

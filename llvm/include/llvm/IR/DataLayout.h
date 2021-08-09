@@ -243,7 +243,7 @@ public:
   bool isLittleEndian() const { return !BigEndian; }
   bool isBigEndian() const { return BigEndian; }
 
-  /// Explicit Pointer
+  /// Layout ensure ExplicitPointer
   bool isImplicitPointer() const { return !ExplicitPointer; }
   bool isExplicitPointer() const { return  ExplicitPointer; }
 

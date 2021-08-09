@@ -344,7 +344,7 @@ public:
   /// the pointer type from the data layout.
   /// FIXME: The default needs to be removed once all the code is updated.
   virtual MVT getPointerTy(const DataLayout &DL, uint32_t AS = 0) const {
-    // Explicit Pointer
+    // ExplicitPointer
     // FIXME: iPTR to Int64? Because there is not Pointer RegisterClass
     // if (DL.isExplicitPointer())
     //   return MVT::getPointerVT(DL.getPointerSizeInBits(AS));
@@ -361,7 +361,7 @@ public:
   /// the pointer type from the data layout.  FIXME: The default needs to be
   /// removed once all the code is updated.
   MVT getPointerMemTy(const DataLayout &DL, uint32_t AS = 0) const {
-    // Explicit Pointer
+    // ExplicitPointer
     // FIXME: iPTR to Int64? Because there is not Pointer RegisterClass
     // if (DL.isExplicitPointer())
     //   return MVT::getPointerVT(DL.getPointerSizeInBits(AS));
@@ -377,7 +377,7 @@ public:
   /// Return the type for code pointers, which is determined by the program
   /// address space specified through the data layout.
   MVT getProgramPointerTy(const DataLayout &DL) const {
-    // Explicit Pointer will not fortify Code Pointer
+    // ExplicitPointer will not fortify Code Pointer
     return getPointerRangeTy(DL, DL.getProgramAddressSpace());
   }
 
