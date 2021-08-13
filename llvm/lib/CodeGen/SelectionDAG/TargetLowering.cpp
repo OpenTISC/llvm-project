@@ -4722,7 +4722,7 @@ TargetLowering::ParseConstraints(const DataLayout &DL,
         }
       } else if (PointerType *PT = dyn_cast<PointerType>(OpTy)) {
         unsigned PtrSize = DL.getPointerSizeInBits(PT->getAddressSpace());
-        // Explicit Pointer
+        // ExplicitPointer
 	// OpInfo.ConstraintVT = MVT::getIntegerVT(PtrSize);
         OpInfo.ConstraintVT = MVT::getPointerVT(PtrSize);
       } else {

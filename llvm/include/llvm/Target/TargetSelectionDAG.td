@@ -299,6 +299,13 @@ def SDTAtomicLoad : SDTypeProfile<1, 1, [
   SDTCisInt<0>, SDTCisPtrTy<1>
 ]>;
 
+def SDTPtrStore : SDTypeProfile<0, 2, [
+  SDTCisPtrTy<0>, SDTCisPtrTy<1>
+]>;
+def SDTPtrLoad : SDTypeProfile<1, 1, [
+  SDTCisPtrTy<0>, SDTCisPtrTy<1>
+]>;
+
 def SDTConvertOp : SDTypeProfile<1, 5, [ //cvtss, su, us, uu, ff, fs, fu, sf, su
   SDTCisVT<2, OtherVT>, SDTCisVT<3, OtherVT>, SDTCisPtrTy<4>, SDTCisPtrTy<5>
 ]>;
@@ -652,6 +659,11 @@ def atomic_load      : SDNode<"ISD::ATOMIC_LOAD", SDTAtomicLoad,
 def atomic_store     : SDNode<"ISD::ATOMIC_STORE", SDTAtomicStore,
                     [SDNPHasChain, SDNPMayStore, SDNPMemOperand]>;
 
+def load_iptr     : SDNode<"ISD::LOAD", SDTPtrLoad,
+                    [SDNPHasChain, SDNPMayLoad, SDNPMemOperand]>;
+def store_iptr    : SDNode<"ISD::STORE", SDTPtrStore,
+                    [SDNPHasChain, SDNPMayStore, SDNPMemOperand]>;
+
 def masked_st    : SDNode<"ISD::MSTORE",  SDTMaskedStore,
                        [SDNPHasChain, SDNPMayStore, SDNPMemOperand]>;
 def masked_ld    : SDNode<"ISD::MLOAD",  SDTMaskedLoad,
@@ -977,10 +989,6 @@ def zextload  : PatFrag<(ops node:$ptr), (unindexedload node:$ptr)> {
   let IsZeroExtLoad = true;
 }
 
-def loadiptr  : PatFrag<(ops node:$ptr), (load node:$ptr)> {
-  let IsLoad = true;
-  let MemoryVT = iPTR;
-}
 def extloadi1  : PatFrag<(ops node:$ptr), (extload node:$ptr)> {
   let IsLoad = true;
   let MemoryVT = i1;
@@ -1112,13 +1120,6 @@ def unindexedstore : PatFrag<(ops node:$val, node:$ptr),
 def store : PatFrag<(ops node:$val, node:$ptr),
                     (unindexedstore node:$val, node:$ptr)> {
   let IsStore = true;
-  let IsTruncStore = false;
-}
-
-def storeiptr : PatFrag<(ops node:$val, node:$ptr),
-                         (store node:$val, node:$ptr)> {
-  let IsStore = true;
-  let MemoryVT = iPTR;
   let IsTruncStore = false;
 }
 
@@ -1640,6 +1641,33 @@ def atomic_load_64 :
   let IsAtomic = true;
   let MemoryVT = i64;
 }
+
+// ExplicitPointer Load/Store
+def loadiptr :
+  PatFrag<(ops node:$ptr),
+          (load_iptr node:$ptr)> {
+  let IsLoad = true;
+  let IsUnindexed = true;
+  let IsNonExtLoad = true;
+  let MemoryVT = iPTR;
+}
+// FIXME: llvm::SDNode don't have member getMemoryTV()
+//          (load_iptr node:$ptr), [{
+//  return cast<SDNode>(N) ->getMemoryVT().isPointer();
+//}]>;
+
+def storeiptr : PatFrag<(ops node:$val, node:$ptr),
+                        (store_iptr node:$val, node:$ptr)> {
+  let IsStore = true;
+  let IsUnindexed = true;
+  let MemoryVT = iPTR;
+  let IsTruncStore = false;
+}
+// FIXME: llvm::SDNode don't have member getMemoryTV()
+//                        (store_iptr node:$val, node:$ptr), [{
+//  return cast<SDNode>(N)->getMemoryVT().isPointer();
+//}]>;
+
 
 //===----------------------------------------------------------------------===//
 // Selection DAG Pattern Support.

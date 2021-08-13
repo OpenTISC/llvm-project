@@ -1550,6 +1550,7 @@ void RISCVDAGToDAGISel::doPeepholeLoadStoreADDI() {
     case RISCV::FLH:
     case RISCV::FLW:
     case RISCV::FLD:
+    case RISCV::LEP:
       BaseOpIdx = 0;
       OffsetOpIdx = 1;
       // ExplicitPointer
@@ -1563,6 +1564,7 @@ void RISCVDAGToDAGISel::doPeepholeLoadStoreADDI() {
     case RISCV::FSH:
     case RISCV::FSW:
     case RISCV::FSD:
+    case RISCV::SEP:
       BaseOpIdx = 1;
       OffsetOpIdx = 2;
       // ExplicitPointer
