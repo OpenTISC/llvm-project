@@ -35,13 +35,6 @@ def : PatGprSimm12<ptradd, INCPI>;
 def : Pat<(ptrtoint GPR:$rs1), (COPY GPR:$rs1)>;
 def : Pat<(inttoptr GPR:$rs1), (COPY GPR:$rs1)>;
 
-/// FrameIndex calculations
-
-def : Pat<(add (i32 AddrFI:$Rs), simm12:$imm12),
-          (INCPI (i32 AddrFI:$Rs), simm12:$imm12)>;
-def : Pat<(IsOrAdd (i32 AddrFI:$Rs), simm12:$imm12),
-          (INCPI (i32 AddrFI:$Rs), simm12:$imm12)>;
-
 /// ExplicitPointer Loads/Stores
 def LEP    : Load_ri<0b111, "lep">, Sched<[WriteLDEP, ReadMemBase]>;
 def SEP    : Store_rri<0b111, "sep">, Sched<[WriteSTEP, ReadStoreData, ReadMemBase]>;
