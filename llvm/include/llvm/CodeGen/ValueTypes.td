@@ -217,6 +217,8 @@ def funcref   : ValueType<0,    175>;  // WebAssembly's funcref type
 def externref : ValueType<0,    176>;  // WebAssembly's externref type
 def x86amx    : ValueType<8192, 177>;  // X86 AMX value
 
+def iPTR32    : ValueType<32, 178>;  // TISC's 32-bit ExplicitPointer type
+def iPTR64    : ValueType<64, 179>;  // TISC's 64-bit ExplicitPointer type
 
 def token      : ValueType<0, 248>;  // TokenTy
 def MetadataVT : ValueType<0, 249>;  // Metadata

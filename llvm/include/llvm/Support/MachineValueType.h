@@ -270,8 +270,15 @@ namespace llvm {
       externref      = 176,    // WebAssembly's externref type
       x86amx         = 177,    // This is an X86 AMX value
 
+      iPTR32         = 178,    // TISC's 32-bit Explicit Pointer type
+      iPTR64         = 179,    // TISC's 64-bit Explicit Pointer type
+
+      FIRST_POINTER_VALUETYPE	= iPTR32,
+      LAST_POINTER_VALUETYPE	= iPTR64,
+
       FIRST_VALUETYPE =  1,    // This is always the beginning of the list.
-      LAST_VALUETYPE = x86amx, // This always remains at the end of the list.
+      // LAST_VALUETYPE = x86amx, // This always remains at the end of the list.
+      LAST_VALUETYPE = iPTR64, // This always remains at the end of the list.
       VALUETYPE_SIZE = LAST_VALUETYPE + 1,
 
       // This is the current maximum for LAST_VALUETYPE.
@@ -330,14 +337,14 @@ namespace llvm {
 
     /// Return true if this is a valid simple valuetype.
     bool isValid() const {
-      return ((SimpleTy >= MVT::FIRST_VALUETYPE &&
-               SimpleTy <= MVT::LAST_VALUETYPE) ||
-	      (SimpleTy <= iPTR || SimpleTy <= iPTRAny));
+      return (SimpleTy >= MVT::FIRST_VALUETYPE &&
+               SimpleTy <= MVT::LAST_VALUETYPE);
     }
 
     /// Return ture if this is a explicit pointer type.
     bool isPointer() const {
-      return (SimpleTy == MVT::iPTR || SimpleTy == MVT::iPTRAny);
+      return (SimpleTy >= MVT::FIRST_POINTER_VALUETYPE &&
+               SimpleTy <= MVT::LAST_POINTER_VALUETYPE);
     }
 
     /// Return true if this is a FP or a vector FP type.
@@ -1053,6 +1060,8 @@ namespace llvm {
       case v2048f32:  return TypeSize::Fixed(65536);
       case funcref:
       case externref: return TypeSize::Fixed(0); // opaque type
+      case iPTR32:  return TypeSize::Fixed(32); // ExplicitPointer
+      case iPTR64:  return TypeSize::Fixed(64); // ExplicitPointer
       }
     }
 
@@ -1141,10 +1150,6 @@ namespace llvm {
       return knownBitsLE(VT);
     }
 
-    static MVT getPointerVT(unsigned BitWidth) {
-        return MVT::iPTR;
-    }
-
     static MVT getFloatingPointVT(unsigned BitWidth) {
       switch (BitWidth) {
       default:
@@ -1178,6 +1183,18 @@ namespace llvm {
         return MVT::i64;
       case 128:
         return MVT::i128;
+      }
+    }
+    
+    // ExplicitPointer
+    static MVT getPointerVT(unsigned BitWidth) {
+      switch (BitWidth) {
+      default:
+        return (MVT::SimpleValueType)(MVT::INVALID_SIMPLE_VALUE_TYPE);
+      case 32:
+        return MVT::iPTR32;
+      case 64:
+        return MVT::iPTR64;
       }
     }
 
@@ -1441,6 +1458,12 @@ namespace llvm {
       return mvt_range(MVT::FIRST_INTEGER_VALUETYPE,
                        (MVT::SimpleValueType)(MVT::LAST_INTEGER_VALUETYPE + 1));
     }
+
+    static mvt_range pointer_valuetypes() {
+      return mvt_range(MVT::FIRST_POINTER_VALUETYPE,
+                       (MVT::SimpleValueType)(MVT::LAST_POINTER_VALUETYPE + 1));
+    }
+
 
     static mvt_range fp_valuetypes() {
       return mvt_range(MVT::FIRST_FP_VALUETYPE,
